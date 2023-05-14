@@ -7,10 +7,14 @@ class Monomial:
         Part without a letter variable is treated as the coefficient
         """
         self.str_representation = str_representation
-        parts = str_representation.split('*')
         # store the variables and their powers in a dict
         self.vars = {}
         self.coefficient = 1
+        negative = False
+        if str_representation.startswith('-'):
+            negative = True
+            str_representation = str_representation[1:]
+        parts = str_representation.split('*')
         for part in parts:
             if part.isdecimal():
                 self.coefficient = int(part)
@@ -20,6 +24,9 @@ class Monomial:
                     self.vars[var] = int(power)
                 else:
                     self.vars[part] = 1
+        if negative:
+            self.coefficient = -self.coefficient
+
 
 
     def get_coefficient(self):
@@ -45,34 +52,22 @@ class Monomial:
         return self.vars == other.vars and self.coefficient == other.coefficient
 
 
-def difference_vector(variables, a, b):
-    """
-    :param variables: the variables, in order, string format. E.g. "xyz"
-    :param a: first monomial
-    :param b: second monomial
-    :return: tuple of the differences of variable powers, corresponding to alpha - beta in the textbook/handout
-    """
-    diff = []
-    for v in variables:
-        a_vars = a.get_vars()
-        b_vars = b.get_vars()
-        a_pow = a_vars[v] if v in a_vars else 0
-        b_pow = b_vars[v] if v in b_vars else 0
-        diff.append(a_pow - b_pow)
-    return tuple(diff)
-
-
 # for testing
 if __name__ == '__main__':
     string = "5*x^5*y^4*z"
-    string2 = "y*z^2"
+    string2 = "-y*z^2"
     m = Monomial(string)
     m2 = Monomial(string2)
-    print(difference_vector("xyz", m, m2))
-    # print(m)
-    # print(m.vars)
-    # print(m.total_degree())
-    # print(m.get_coefficient())
+    # print(difference_vector("xyz", m, m2))
+    print(m)
+    print(m.vars)
+    print(m.total_degree())
+    print(m.get_coefficient())
+    print("--------")
+    print(m2)
+    print(m2.vars)
+    print(m2.total_degree())
+    print(m2.get_coefficient())
 
 
 
