@@ -1,5 +1,5 @@
 import functools
-from Monomial import Monomial # for testing
+from Monomial import Monomial, like_terms # for testing
 from MonomialOrder import MonomialOrder # also for testing
 
 
@@ -10,8 +10,7 @@ class Polynomial:
         """
         :param monomials: list of Monomials
         """
-        self.terms = monomials
-
+        self.terms = combine_terms(monomials)
 
     def reorder(self, monomial_order):
         self.terms = sorted(self.terms, key=functools.cmp_to_key(monomial_order.compare), reverse=True)
@@ -27,18 +26,55 @@ class Polynomial:
 
     def ordered_str(self, monomial_order):
         self.reorder(monomial_order)
-        ret = "+".join([term.ordered_str(monomial_order.get_variable_order()) for term in self.terms])
-        ret = ret.replace("+-", "-")
+        ret = " + ".join([term.ordered_str(monomial_order.get_variable_order()) for term in self.terms])
+        ret = ret.replace("+ -", "- ")
         return ret
+    
+    def __eq__(self, other):
+        self_terms = set(self.terms)
+        other_terms = set(other.terms)
+        return self_terms == other_terms
+
+
+def combine_terms(terms):
+        new_terms = []
+        combined = []
+        for i, m1 in enumerate(terms):
+            if m1 not in combined:
+                term_group = [m1]
+                for m2 in terms[i+1:]:
+                    if m2 not in combined:
+                        if like_terms(m1, m2):
+                            term_group.append(m2)
+                            combined.append(m2)
+                new_coefficient = sum([m.coefficient for m in term_group])
+                new_vars = m1.get_vars()
+                new_monomial = Monomial(new_vars, new_coefficient)
+                new_terms.append(new_monomial)
+        return new_terms
 
 
 if __name__ == "__main__":
-    string = "5*x^5*y^4*z"
-    string2 = "-y*z^2"
-    m = Monomial(string)
-    m2 = Monomial(string2)
-    p = Polynomial([m, m2])
+    # string = "5*x^5*y^4*z"
+    # string2 = "y^2*z^9"
+    # string3 = "x^3*z^8"
+    # string4 = "2"
+    # string5 = "0"
+
+    # m = Monomial(string)
+    # m2 = Monomial(string2)
+    # m3 = Monomial(string3)
+    # m4 = Monomial(string4)
+    # m5 = Monomial(string5)
+    # p = Polynomial([m, m2, m3, m4, m5])
+
+    # lt = p.leading_term(order)
+    # print(lt.ordered_str("xyz"))
+
+    m1 = Monomial("5.3*x^2*y^2")
+    m2 = Monomial("-3*x^2*y^2")
+    m3 = Monomial({'x':1,'y':1},1)
+    p = Polynomial([m1,m2,m3])
+    
     order = MonomialOrder("xyz", "lex")
-    lt = p.leading_term(order)
-    print(lt.ordered_str("xyz"))
     print(p.ordered_str(order))
