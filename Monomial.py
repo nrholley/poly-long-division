@@ -44,8 +44,25 @@ class Monomial:
 
 
     def __str__(self):
-        # TODO: REORDER VARIABLES IN STR
         return self.str_representation
+
+
+    def ordered_str(self, variable_order):
+        """
+        :param variable_order: eg "xyz"
+        :return: string representation of monomial with its variables in order
+        """
+        parts = [str(self.coefficient)] if self.coefficient != 1 else []
+        for var in variable_order:
+            if var in self.vars:
+                power = self.vars[var]
+                new = str(var) if power == 1 else f"{var}^{power}"
+                parts.append(new)
+        ret = '*'.join(parts)
+        # get rid of -1 coefficient. There's probably a better way to do this but whatever
+        if ret.startswith("-1*"):
+            ret = "-" + ret[3:]
+        return ret
 
 
     def __eq__(self, other):
@@ -58,16 +75,19 @@ if __name__ == '__main__':
     string2 = "-y*z^2"
     m = Monomial(string)
     m2 = Monomial(string2)
+    order = "zyx"
+    print(m.ordered_str(order))
+    print(m2.ordered_str(order))
     # print(difference_vector("xyz", m, m2))
-    print(m)
-    print(m.vars)
-    print(m.total_degree())
-    print(m.get_coefficient())
-    print("--------")
-    print(m2)
-    print(m2.vars)
-    print(m2.total_degree())
-    print(m2.get_coefficient())
+    # print(m)
+    # print(m.vars)
+    # print(m.total_degree())
+    # print(m.get_coefficient())
+    # print("--------")
+    # print(m2)
+    # print(m2.vars)
+    # print(m2.total_degree())
+    # print(m2.get_coefficient())
 
 
 

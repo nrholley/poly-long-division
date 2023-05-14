@@ -2,6 +2,13 @@ from Monomial import Monomial # for testing
 import functools
 
 
+def lex_compare(diff):
+    for num in diff:
+        if num != 0:
+            return num
+    return 0
+
+
 class MonomialOrder:
 
 
@@ -25,14 +32,6 @@ class MonomialOrder:
             diff.append(a_pow - b_pow)
         return tuple(diff)
 
-
-    def lex_compare(self, diff):
-        for num in diff:
-            if num != 0:
-                return num
-        return 0
-
-
     def compare(self, a, b):
         """
         :param a: first monomial
@@ -41,18 +40,22 @@ class MonomialOrder:
         """
         diff = self.difference_vector(a, b)
         if self.order_name == "lex":
-            return self.lex_compare(diff)
+            return lex_compare(diff)
         degree_diff = a.total_degree() - b.total_degree()
         if degree_diff:
             return degree_diff
         if self.order_name == "grlex":
-            return self.lex_compare(diff)
+            return lex_compare(diff)
         if self.order_name == "grevlex":
             for num in diff[::-1]:
                 if num != 0:
                     return -num
             # shouldn't need to return 0 here since diff is all zeroes iff total degree is the same
         raise Exception("What the hell happened?")
+
+
+    def get_variable_order(self):
+        return self.variable_order
 
 
 if __name__ == "__main__":
