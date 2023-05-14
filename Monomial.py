@@ -28,7 +28,6 @@ class Monomial:
             self.coefficient = -self.coefficient
 
 
-
     def get_coefficient(self):
         return self.coefficient
 
