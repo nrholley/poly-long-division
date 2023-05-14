@@ -57,11 +57,11 @@ class MonomialOrder:
 
 if __name__ == "__main__":
     # TODO: MORE TESTING
-    string = "5*x^5*y^2*z^3"
+    string = "5*x^4*y^3*z^3"
     string2 = "-x^5*y*z^4"
     m = Monomial(string)
     m2 = Monomial(string2)
-    order = MonomialOrder("xyz", "grlex")
+    order = MonomialOrder("zyx", "grevlex")
     monlist = [m, m2]
     for mon in monlist:
         print(mon)

@@ -44,6 +44,7 @@ class Monomial:
 
 
     def __str__(self):
+        # TODO: REORDER VARIABLES IN STR
         return self.str_representation
 
 
