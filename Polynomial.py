@@ -7,11 +7,28 @@ from copy import copy
 class Polynomial:
 
 
-    def __init__(self, monomials):
+    def __init__(self, arg):
         """
         :param monomials: list of Monomials
         """
+        if isinstance(arg, str):
+            self.string_init(arg)
+        else:
+            self.list_init(arg)
+
+
+    def list_init(self, monomials):
         self.terms = combine_terms(monomials)
+    
+    def string_init(self, str_representation):
+        monomials = []
+        str_representation = str_representation.replace("-","+-")
+        terms = [term for term in str_representation.split("+") if term != ""]
+        for term in terms:
+            monomial = Monomial(term)
+            monomials.append(monomial)
+        self.terms = combine_terms(monomials)
+            
 
     def get_terms(self):
         return copy(self.terms)
@@ -43,6 +60,7 @@ class Polynomial:
 def combine_terms(terms):
         new_terms = []
         combined = []
+
         for i, m1 in enumerate(terms):
             if m1 not in combined:
                 term_group = [m1]
@@ -55,6 +73,10 @@ def combine_terms(terms):
                 new_vars = m1.get_vars()
                 new_monomial = Monomial(new_vars, new_coefficient)
                 new_terms.append(new_monomial)
+
+        if new_terms != [Monomial('0')]:
+            new_terms = [term for term in new_terms if term != Monomial('0')]
+
         return new_terms
 
 def poly_multiply(p1, p2):
@@ -93,8 +115,11 @@ if __name__ == "__main__":
     # order = MonomialOrder("xyz", "lex")
     # print(p.ordered_str(order))
 
-    p1 = Polynomial([Monomial('2*x')])
-    p2 = Polynomial([Monomial('3*y^2')])
-    [print(m) for m in poly_multiply(p1,p2).get_terms()]
-    [print(m) for m in poly_multiply(p2,p1).get_terms()]
-    [print(m) for m in poly_add(p1,p2).get_terms()]
+    # p1 = Polynomial([Monomial('2*x')])
+    # p2 = Polynomial([Monomial('3*y^2')])
+    # [print(m) for m in poly_multiply(p1,p2).get_terms()]
+    # [print(m) for m in poly_multiply(p2,p1).get_terms()]
+    # [print(m) for m in poly_add(p1,p2).get_terms()]
+
+    p = Polynomial('x^2*y+x*y^2+x-1.0*x+y^2+0.0+0.0+0.0+0.0+0.0')
+    print(p.ordered_str(MonomialOrder('zyx','lex')))

@@ -80,6 +80,9 @@ class Monomial:
         :param variable_order: eg "xyz"
         :return: string representation of monomial with its variables in order
         """
+        if self == Monomial("1"):
+            # cosmic joke
+            return '1'
         parts = [str(self.coefficient)] if self.coefficient != 1 else []
         for var in variable_order:
             if var in self.vars:
@@ -125,9 +128,12 @@ def divide(dividend, divisor):
     quotient_vars = {}
     for var in dividend.get_vars():
         dividend_power = dividend.get_vars()[var]
-        divisor_power = divisor.get_vars()[var]
-        new_power = dividend_power - divisor_power
-        quotient_vars[var] = new_power
+        if var in divisor.get_vars():
+            divisor_power = divisor.get_vars()[var]
+            new_power = dividend_power - divisor_power
+            quotient_vars[var] = new_power
+        else:
+            quotient_vars[var] = dividend_power
     return Monomial(quotient_vars, quotient_coeff)
 
 def multiply(m1, m2):

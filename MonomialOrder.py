@@ -50,7 +50,7 @@ class MonomialOrder:
             for num in diff[::-1]:
                 if num != 0:
                     return -num
-            # shouldn't need to return 0 here since diff is all zeroes iff total degree is the same
+                return 0
         raise Exception("What the hell happened?")
 
 
@@ -64,8 +64,9 @@ if __name__ == "__main__":
     string2 = "-x^5*y*z^4"
     m = Monomial(string)
     m2 = Monomial(string2)
+    m3 = Monomial("x^4*y^3*z^3")
     order = MonomialOrder("zyx", "grevlex")
-    monlist = [m, m2]
+    monlist = [m, m2, m3]
     for mon in monlist:
         print(mon)
     print("--------")
