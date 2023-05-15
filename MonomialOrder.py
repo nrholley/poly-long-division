@@ -3,6 +3,11 @@ import functools
 
 
 def lex_compare(diff):
+    """
+    Performs the lex comparison on a difference vector alpha-beta
+    :param diff: tuple, the differences of the powers between two Monomials
+    :return: a positive number if alpha>beta, negative in alpha<beta, 0 if equal
+    """
     for num in diff:
         if num != 0:
             return num
@@ -10,15 +15,23 @@ def lex_compare(diff):
 
 
 class MonomialOrder:
+    """
+    Class used to order the terms of polynomials and get leading terms for the division algorithm
+    """
 
 
     def __init__(self, variable_order, order_name):
+        """
+        :param variable_order: string, e.g. "xyz", which corresponds to "x>y>z"
+        :param order_name: lex, grlex, or grevlex
+        """
         self.variable_order = variable_order
         self.order_name = order_name
 
 
     def difference_vector(self, a, b):
         """
+        Computes a vector of the differences in powers between two monomials
         :param a: first monomial
         :param b: second monomial
         :return: tuple of the differences of variable powers, corresponding to alpha - beta in the textbook/handout
@@ -34,13 +47,15 @@ class MonomialOrder:
 
     def compare(self, a, b):
         """
+        Allows for the comparison of polynomials in sorted() by converting it with functools.cmp_to_key
         :param a: first monomial
-        :param b: second
+        :param b: second monomial
         :return: positive # if a > b, negative # if a < b, 0 if a == b
         """
         diff = self.difference_vector(a, b)
         if self.order_name == "lex":
             return lex_compare(diff)
+        # if not lex order, monomial with larger degree is bigger
         degree_diff = a.total_degree() - b.total_degree()
         if degree_diff:
             return degree_diff
@@ -51,10 +66,14 @@ class MonomialOrder:
                 if num != 0:
                     return -num
                 return 0
+        # invalid monomial order, or something crazy happened
         raise Exception("What the hell happened?")
 
 
     def get_variable_order(self):
+        """
+        :return: the ordering of variables, e.g. "xyz" corresponding to "x>y>z"
+        """
         return self.variable_order
 
 

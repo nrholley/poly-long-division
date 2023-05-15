@@ -1,11 +1,18 @@
 #TODO: error catching malformed mono/polynomials
 
 from Polynomial import Polynomial
-from Monomial import Monomial, divides
+from Monomial import divides
 from MonomialOrder import MonomialOrder
 import argparse
 
 def long_divide(dividend, divisors, order):
+    """
+    The Franz Kafka Memorial Multivariate Polynomial Long Division Algorithm
+    :param dividend: the Polynomial dividend
+    :param divisors: a list of Polynomial divisors
+    :param order: a MonomialOrder
+    :return: a tuple of the quotients and the remainder
+    """
     dividend.reorder(order)
     for divisor in divisors:
         divisor.reorder(order)

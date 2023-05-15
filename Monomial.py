@@ -10,8 +10,9 @@ class Monomial:
 
     def str_init(self, str_representation):
         """
+        Initialize a Monomial using a string
         Use ^ for powers and * for multiplication
-        E.g. 5*x^3*y*z^2
+        :param str_representation: E.g. "5*x^3*y*z^2"
         Part without a letter variable is treated as the coefficient
         """
         self.str_representation = str_representation
@@ -22,6 +23,7 @@ class Monomial:
         # store the variables and their powers in a dict
         self.vars = {}
         self.coefficient = 1
+        # parse string input
         negative = False
         if str_representation.startswith('-'):
             negative = True
@@ -41,6 +43,12 @@ class Monomial:
 
 
     def dict_init(self, vars, coefficient):
+        """
+        Alternative initialization where vars and coefficient attributes are directly provided
+        :param vars: dict
+        :param coefficient: float
+        :return:
+        """
         self.vars = {}
         for var in vars:
             if vars[var] != 0:
@@ -54,12 +62,22 @@ class Monomial:
 
 
     def get_coefficient(self):
+        """
+        :return: the coefficient
+        """
         return self.coefficient
 
     def get_vars(self):
+        """
+        :return: the {variable: power} dictionary
+        """
         return self.vars.copy()
 
     def total_degree(self):
+        """
+        Calculates the total degree of the monomial
+        :return: int
+        """
         degree = 0
         for power in self.vars.values():
             degree += power
@@ -72,9 +90,17 @@ class Monomial:
         return self.str_representation
     
     def __hash__(self):
+        """
+        Necessary to put Monomials in a set
+        """
         return hash(self.str_representation)
     
     def __mul__(self, other):
+        """
+        Multiplies Monomials
+        :param other: a second Monomial
+        :return: the product of the Monomials, a new Monomial
+        """
         prod_coeff = self.get_coefficient() * other.get_coefficient()
         prod_vars = self.get_vars()
         for var, power in other.get_vars().items():
@@ -85,6 +111,11 @@ class Monomial:
         return Monomial(prod_vars, prod_coeff)
     
     def __truediv__(self, other):
+        """
+        Divides Monomials. Should not be called without checking divisibility
+        :param other: a second Monomial
+        :return: the results of dividing the Monomials, a new Monomial
+        """
         quotient_coeff = self.get_coefficient() / other.get_coefficient()
         quotient_vars = {}
         for var in self.get_vars():
@@ -117,7 +148,7 @@ class Monomial:
                 new = str(var) if power == 1 else f"{var}^{power}"
                 parts.append(new)
         ret = '*'.join(parts)
-        # get rid of -1 coefficient. There's probably a better way to do this but whatever
+        # get rid of -1 coefficient
         if ret.startswith("-1*"):
             ret = "-" + ret[3:]
         elif ret.startswith("-1.0*"):
@@ -126,15 +157,31 @@ class Monomial:
 
 
     def __eq__(self, other):
+        """
+        Monomials are equal if their variables, powers, and coefficients are all the same
+        :param other: the second Monomial
+        :return: boolean
+        """
         return self.vars == other.vars and self.coefficient == other.coefficient
 
 def like_terms(m1, m2):
+    """
+    Determines if two Monomials are like terms
+    :param m1: Monomial
+    :param m2: Monomial
+    :return: boolean
+    """
     return m1.get_vars() == m2.get_vars()
 
 
 def is_float(string):
-    # we apologize
-    # on behalf of pythonhow.com
+    """
+    Hacky way of figuring out whether a string is a coefficient when parsing the monomial string, since coefficients
+    need not be integers
+    :param string: a string, e.g. "1.0" or "x^7"
+    :return: boolean
+    """
+    # we apologize on behalf of pythonhow.com
     try:
         float(string)
         return True
@@ -142,6 +189,12 @@ def is_float(string):
         return False
 
 def divides(divisor, dividend):
+    """
+    Checks divisibility of two Monomials
+    :param divisor: Monomial
+    :param dividend: Monomial
+    :return: boolean
+    """
     if not (set(divisor.get_vars().keys()) <= set(dividend.get_vars().keys())):
         return False
     for var in divisor.get_vars():
