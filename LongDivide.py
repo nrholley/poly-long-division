@@ -1,9 +1,8 @@
-#TODO: move arithmetic operations into magic methods
 #TODO: argparse entry point
 #TODO: error catching malformed mono/polynomials
 
-from Polynomial import Polynomial, poly_add, poly_multiply
-from Monomial import Monomial, divides, divide
+from Polynomial import Polynomial
+from Monomial import Monomial, divides
 from MonomialOrder import MonomialOrder
 
 def long_divide(dividend, divisors, order):
@@ -21,15 +20,15 @@ def long_divide(dividend, divisors, order):
             lt_f_i = divisors[i].leading_term(order)
             lt_p = p.leading_term(order)
             if divides(lt_f_i,lt_p):
-                div_result = divide(lt_p, lt_f_i)
-                quotients[i] = poly_add(quotients[i], Polynomial([div_result]))
-                p = poly_add(p, poly_multiply(Polynomial('-1'),poly_multiply(Polynomial([div_result]), divisors[i])))
+                div_result = lt_p / lt_f_i
+                quotients[i] += Polynomial([div_result])
+                p -= Polynomial([div_result]) * divisors[i]
                 division_occurred = True
             else:
                 i += 1
         if not division_occurred:
-            r = poly_add(r, Polynomial([p.leading_term(order)]))
-            p = poly_add(p, poly_multiply(Polynomial('-1'), Polynomial([p.leading_term(order)])))
+            r += Polynomial([p.leading_term(order)])
+            p -= Polynomial([p.leading_term(order)])
     return (quotients, r)
 
 if __name__ == "__main__":
@@ -39,7 +38,7 @@ if __name__ == "__main__":
     p3 = Polynomial('x-y^3')
 
 
-    order = MonomialOrder('xyz','grlex')
+    order = MonomialOrder('xyz','lex')
 
     quotients, remainder = long_divide(p1,[p2, p3],order)
     [print(q.ordered_str(order)) for q in quotients]
