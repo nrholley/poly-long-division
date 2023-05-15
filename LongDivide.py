@@ -13,7 +13,8 @@ def long_divide(dividend, divisors, order):
     p = dividend
     r = Polynomial('0')
 
-    while p != Polynomial('0'):
+    # equals 0 check was failing due to empty polynomials
+    while p != Polynomial('0') and p.get_terms():
         i = 0
         division_occurred = False
         while i < len(divisors) and not division_occurred:
