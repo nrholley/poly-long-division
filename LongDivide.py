@@ -45,6 +45,9 @@ if __name__ == "__main__":
     divisors = [Polynomial(divisor) for divisor in args.divisors]
     quotients, remainder = long_divide(dividend, divisors, monomial_order)
     assert len(quotients) == len(divisors)
+    print()
+    print(f"Dividend: {dividend.ordered_str(monomial_order)}")
+    print("----------------")
     for divisor, quotient in zip(divisors, quotients):
         print(f"Divisor: {divisor.ordered_str(monomial_order)}, quotient: {quotient.ordered_str(monomial_order)}")
     print()
