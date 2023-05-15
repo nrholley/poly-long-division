@@ -1,9 +1,9 @@
-#TODO: argparse entry point
 #TODO: error catching malformed mono/polynomials
 
 from Polynomial import Polynomial
 from Monomial import Monomial, divides
 from MonomialOrder import MonomialOrder
+import argparse
 
 def long_divide(dividend, divisors, order):
     dividend.reorder(order)
@@ -29,17 +29,37 @@ def long_divide(dividend, divisors, order):
         if not division_occurred:
             r += Polynomial([p.leading_term(order)])
             p -= Polynomial([p.leading_term(order)])
-    return (quotients, r)
+    return quotients, r
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--monomial-order", "-mo", choices=["lex", "grlex", "grevlex"], help="Input lex, grlex, \
+                        or grevlex as the monomial order. The default is lex", default="lex")
+    parser.add_argument("--variable-order", "-vo", help="input a variable order, e.g. xyz or zyx, the default is xyz.\
+                        Write in decreasing order from left to right", default="x>y>z")
+    parser.add_argument("--dividend", help="input a polynomial to be used as the dividend. E.g. x^4*y+1")
+    parser.add_argument("--divisors", nargs="+", help="input polynomials to be used as the divisors, separated by spaces")
+    args = parser.parse_args()
+    monomial_order = MonomialOrder(args.variable_order, args.monomial_order)
+    dividend = Polynomial(args.dividend)
+    divisors = [Polynomial(divisor) for divisor in args.divisors]
+    quotients, remainder = long_divide(dividend, divisors, monomial_order)
+    assert len(quotients) == len(divisors)
+    for divisor, quotient in zip(divisors, quotients):
+        print(f"Divisor: {divisor.ordered_str(monomial_order)}, quotient: {quotient.ordered_str(monomial_order)}")
+    print()
+    print(f"Remainder: {remainder.ordered_str(monomial_order)}")
 
-    p1 = Polynomial('x^7*y^2+x^3*y^2-y+1')
-    p2 = Polynomial('x*y^2-x')
-    p3 = Polynomial('x-y^3')
 
 
-    order = MonomialOrder('xyz','lex')
-
-    quotients, remainder = long_divide(p1,[p2, p3],order)
-    [print(q.ordered_str(order)) for q in quotients]
-    print(remainder.ordered_str(order))
+    # testing code
+    # p1 = Polynomial('x^7*y^2+x^3*y^2-y+1')
+    # p2 = Polynomial('x*y^2-x')
+    # p3 = Polynomial('x-y^3')
+    #
+    #
+    # order = MonomialOrder('xyz','lex')
+    #
+    # quotients, remainder = long_divide(p1,[p2, p3],order)
+    # [print(q.ordered_str(order)) for q in quotients]
+    # print(remainder.ordered_str(order))
