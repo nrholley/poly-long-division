@@ -1,6 +1,7 @@
 import functools
-from Monomial import Monomial, like_terms # for testing
+from Monomial import Monomial, like_terms, multiply # for testing
 from MonomialOrder import MonomialOrder # also for testing
+from copy import copy
 
 
 class Polynomial:
@@ -12,6 +13,9 @@ class Polynomial:
         """
         self.terms = combine_terms(monomials)
 
+    def get_terms(self):
+        return copy(self.terms)
+
     def reorder(self, monomial_order):
         self.terms = sorted(self.terms, key=functools.cmp_to_key(monomial_order.compare), reverse=True)
 
@@ -21,7 +25,7 @@ class Polynomial:
         :return: returns the leading term, a Monomial
         """
         self.reorder(monomial_order)
-        return self.terms[0]
+        return self.get_terms()[0]
 
 
     def ordered_str(self, monomial_order):
@@ -53,6 +57,16 @@ def combine_terms(terms):
                 new_terms.append(new_monomial)
         return new_terms
 
+def poly_multiply(p1, p2):
+    prod_terms = []
+    for term1 in p1.get_terms():
+        for term2 in p2.get_terms():
+            prod_term = multiply(term1, term2)
+            prod_terms.append(prod_term)
+    return Polynomial(prod_terms)
+
+def poly_add(p1, p2):
+    return Polynomial(p1.get_terms() + p2.get_terms())
 
 if __name__ == "__main__":
     # string = "5*x^5*y^4*z"
@@ -71,10 +85,16 @@ if __name__ == "__main__":
     # lt = p.leading_term(order)
     # print(lt.ordered_str("xyz"))
 
-    m1 = Monomial("5.3*x^2*y^2")
-    m2 = Monomial("-3*x^2*y^2")
-    m3 = Monomial({'x':1,'y':1},1)
-    p = Polynomial([m1,m2,m3])
+    # m1 = Monomial("5.3*x^2*y^2")
+    # m2 = Monomial("-3*x^2*y^2")
+    # m3 = Monomial({'x':1,'y':1},1)
+    # p = Polynomial([m1,m2,m3])
     
-    order = MonomialOrder("xyz", "lex")
-    print(p.ordered_str(order))
+    # order = MonomialOrder("xyz", "lex")
+    # print(p.ordered_str(order))
+
+    p1 = Polynomial([Monomial('2*x')])
+    p2 = Polynomial([Monomial('3*y^2')])
+    [print(m) for m in poly_multiply(p1,p2).get_terms()]
+    [print(m) for m in poly_multiply(p2,p1).get_terms()]
+    [print(m) for m in poly_add(p1,p2).get_terms()]

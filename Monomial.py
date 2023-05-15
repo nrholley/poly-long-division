@@ -41,7 +41,10 @@ class Monomial:
 
 
     def dict_init(self, vars, coefficient):
-        self.vars = vars
+        self.vars = {}
+        for var in vars:
+            if vars[var] != 0:
+                self.vars[var] = vars[var]
         self.coefficient = coefficient
         if self.coefficient == 0:
             self.str_representation = '0'
@@ -107,7 +110,7 @@ def is_float(string):
     except ValueError:
         return False
 
-def is_divisible(dividend, divisor):
+def divides(divisor, dividend):
     if not (set(divisor.get_vars().keys()) <= set(dividend.get_vars().keys())):
         return False
     for var in divisor.get_vars():
@@ -118,7 +121,7 @@ def is_divisible(dividend, divisor):
     return True
 
 def divide(dividend, divisor):
-    quotient_coeff = dividend.coefficient / divisor.coefficient
+    quotient_coeff = dividend.get_coefficient() / divisor.get_coefficient()
     quotient_vars = {}
     for var in dividend.get_vars():
         dividend_power = dividend.get_vars()[var]
@@ -127,16 +130,27 @@ def divide(dividend, divisor):
         quotient_vars[var] = new_power
     return Monomial(quotient_vars, quotient_coeff)
 
+def multiply(m1, m2):
+    prod_coeff = m1.get_coefficient() * m2.get_coefficient()
+    prod_vars = m1.get_vars()
+    for var, power in m2.get_vars().items():
+        if var in prod_vars:
+            prod_vars[var] += power
+        else:
+            prod_vars[var] = power
+    return Monomial(prod_vars, prod_coeff)
+
+
 
 # for testing
 if __name__ == '__main__':
-    string = "5*x^5*y^4*z"
-    string2 = "-y*z^2"
-    m = Monomial(string)
-    m2 = Monomial(string2)
-    order = "zyx"
-    print(m.ordered_str(order))
-    print(m2.ordered_str(order))
+    # string = "5*x^5*y^4*z"
+    # string2 = "-y*z^2"
+    # m = Monomial(string)
+    # m2 = Monomial(string2)
+    # order = "zyx"
+    # print(m.ordered_str(order))
+    # print(m2.ordered_str(order))
     # print(difference_vector("xyz", m, m2))
     # print(m)
     # print(m.vars)
@@ -147,6 +161,18 @@ if __name__ == '__main__':
     # print(m2.vars)
     # print(m2.total_degree())
     # print(m2.get_coefficient())
-
+    m1 = Monomial('2*x')
+    m2 = Monomial('-1')
+    print(multiply(m1,m2))
+    # m2 = Monomial('y')
+    # m3 = Monomial('5*x^3')
+    # print(divides(m1,m2))
+    # print(divides(m1, m3))
+    # print(divides(m3,m1))
+    # print(divide(m3,m1))
+    # m4 = multiply(m1,m2)
+    # print(multiply(m3,m4))
+    # print(multiply(m4,m3))
+    
 
 
