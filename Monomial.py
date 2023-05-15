@@ -103,9 +103,13 @@ class Monomial:
         :param variable_order: eg "xyz"
         :return: string representation of monomial with its variables in order
         """
+        # make floats for sake of consistency
         if self == Monomial("1"):
             # cosmic joke
-            return '1'
+            return '1.0'
+        if self == Monomial("0"):
+            # cosmic joke pt 2
+            return '0.0'
         parts = [str(self.coefficient)] if self.coefficient != 1 else []
         for var in variable_order:
             if var in self.vars:
@@ -116,6 +120,8 @@ class Monomial:
         # get rid of -1 coefficient. There's probably a better way to do this but whatever
         if ret.startswith("-1*"):
             ret = "-" + ret[3:]
+        elif ret.startswith("-1.0*"):
+            ret = "-" + ret[5:]
         return ret
 
 
@@ -167,7 +173,7 @@ if __name__ == '__main__':
     # print(m2.get_coefficient())
     m1 = Monomial('2*x')
     m2 = Monomial('-1')
-    print(multiply(m1,m2))
+    # print(multiply(m1,m2))
     # m2 = Monomial('y')
     # m3 = Monomial('5*x^3')
     # print(divides(m1,m2))
