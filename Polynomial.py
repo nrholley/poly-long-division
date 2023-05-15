@@ -1,5 +1,5 @@
 import functools
-from Monomial import Monomial, like_terms, multiply # for testing
+from Monomial import Monomial, like_terms # for testing
 from MonomialOrder import MonomialOrder # also for testing
 from copy import copy
 
@@ -51,11 +51,31 @@ class Polynomial:
         ret = ret.replace("+ -", "- ")
         return ret
     
+    def __repr__(self):
+        # prints using lex order, xyz
+        # TODO: handle variables other than xyz
+        default_order = MonomialOrder('xyz','lex')
+        return self.ordered_str(default_order)
+
     def __eq__(self, other):
         self_terms = set(self.terms)
         other_terms = set(other.terms)
         return self_terms == other_terms
-
+    
+    def __add__(self, other):
+        return Polynomial(self.get_terms() + other.get_terms())
+    
+    def __sub__(self, other):
+        negative_other = other * Polynomial('-1')
+        return self + negative_other
+    
+    def __mul__(self, other):
+        prod_terms = []
+        for term1 in self.get_terms():
+            for term2 in other.get_terms():
+                prod_term = term1 * term2
+                prod_terms.append(prod_term)
+        return Polynomial(prod_terms)
 
 def combine_terms(terms):
         new_terms = []
@@ -79,16 +99,6 @@ def combine_terms(terms):
 
         return new_terms
 
-def poly_multiply(p1, p2):
-    prod_terms = []
-    for term1 in p1.get_terms():
-        for term2 in p2.get_terms():
-            prod_term = multiply(term1, term2)
-            prod_terms.append(prod_term)
-    return Polynomial(prod_terms)
-
-def poly_add(p1, p2):
-    return Polynomial(p1.get_terms() + p2.get_terms())
 
 if __name__ == "__main__":
     # string = "5*x^5*y^4*z"

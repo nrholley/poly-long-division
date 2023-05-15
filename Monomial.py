@@ -56,10 +56,8 @@ class Monomial:
     def get_coefficient(self):
         return self.coefficient
 
-
     def get_vars(self):
         return self.vars.copy()
-
 
     def total_degree(self):
         degree = 0
@@ -67,12 +65,37 @@ class Monomial:
             degree += power
         return degree
 
-
     def __str__(self):
+        return self.str_representation
+    
+    def __repr__(self):
         return self.str_representation
     
     def __hash__(self):
         return hash(self.str_representation)
+    
+    def __mul__(self, other):
+        prod_coeff = self.get_coefficient() * other.get_coefficient()
+        prod_vars = self.get_vars()
+        for var, power in other.get_vars().items():
+            if var in prod_vars:
+                prod_vars[var] += power
+            else:
+                prod_vars[var] = power
+        return Monomial(prod_vars, prod_coeff)
+    
+    def __truediv__(self, other):
+        quotient_coeff = self.get_coefficient() / other.get_coefficient()
+        quotient_vars = {}
+        for var in self.get_vars():
+            dividend_power = self.get_vars()[var]
+            if var in other.get_vars():
+                divisor_power = other.get_vars()[var]
+                new_power = dividend_power - divisor_power
+                quotient_vars[var] = new_power
+            else:
+                quotient_vars[var] = dividend_power
+        return Monomial(quotient_vars, quotient_coeff)
 
 
     def ordered_str(self, variable_order):
@@ -103,7 +126,6 @@ def like_terms(m1, m2):
     return m1.get_vars() == m2.get_vars()
 
 
-
 def is_float(string):
     # we apologize
     # on behalf of pythonhow.com
@@ -122,30 +144,6 @@ def divides(divisor, dividend):
         if divisor_power > dividend_power:
             return False
     return True
-
-def divide(dividend, divisor):
-    quotient_coeff = dividend.get_coefficient() / divisor.get_coefficient()
-    quotient_vars = {}
-    for var in dividend.get_vars():
-        dividend_power = dividend.get_vars()[var]
-        if var in divisor.get_vars():
-            divisor_power = divisor.get_vars()[var]
-            new_power = dividend_power - divisor_power
-            quotient_vars[var] = new_power
-        else:
-            quotient_vars[var] = dividend_power
-    return Monomial(quotient_vars, quotient_coeff)
-
-def multiply(m1, m2):
-    prod_coeff = m1.get_coefficient() * m2.get_coefficient()
-    prod_vars = m1.get_vars()
-    for var, power in m2.get_vars().items():
-        if var in prod_vars:
-            prod_vars[var] += power
-        else:
-            prod_vars[var] = power
-    return Monomial(prod_vars, prod_coeff)
-
 
 
 # for testing
